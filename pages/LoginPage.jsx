@@ -40,13 +40,14 @@ const LoginPage = ({navigation}) => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => console.log('Login pressed')}>
+            onPress={() => navigation.navigate('Home')}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
         </View>
 
         <Text style={styles.registerText}>
-          Belum punya akun? <Text onPress={() => navigation.navigate('Register')}>Daftar</Text>
+          Belum punya akun?{' '}
+          <Text onPress={() => navigation.navigate('Register')}>Daftar</Text>
         </Text>
 
         <Text style={styles.copyRightText}>© 2024 Cakap Messenger</Text>

@@ -21,7 +21,7 @@ const RegisterPage = ({navigation}) => {
       }
     });
   };
-  
+
   return (
     <ImageBackground
       source={require('../assets/images/background.jpg')}
@@ -54,7 +54,11 @@ const RegisterPage = ({navigation}) => {
 
           <View style={styles.inputGroup}>
             <Text style={styles.labelForm}>Email</Text>
-            <TextInput style={styles.inputText} placeholder="Masukan Email" />
+            <TextInput
+              style={styles.inputText}
+              placeholder="Masukan Email"
+              keyboardType="email-address"
+            />
           </View>
 
           <View style={styles.inputGroup}>
@@ -77,7 +81,7 @@ const RegisterPage = ({navigation}) => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => console.log('Register pressed')}>
+              onPress={() => navigation.navigate('Home')}>
               <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
           </View>
