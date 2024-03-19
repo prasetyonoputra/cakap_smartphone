@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   ImageBackground,
@@ -11,6 +11,19 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const HomePage = ({navigation}) => {
+  const [modaloption, setModalOption] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setModalOption(false);
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const handleOpenModalOption = () => {
+    setModalOption(!modaloption);
+  };
+
   return (
     <ImageBackground
       source={require('../assets/images/background.jpg')}
@@ -26,7 +39,7 @@ const HomePage = ({navigation}) => {
             <Text style={styles.usernameText}>Name User</Text>
           </View>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleOpenModalOption()}>
             <Icon name="caret-down" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -81,6 +94,25 @@ const HomePage = ({navigation}) => {
           <Ionicons name="call" size={30} color="white" />
         </TouchableOpacity>
       </View>
+
+      {modaloption && (
+        <View style={styles.modalOption}>
+          <TouchableOpacity style={styles.optionSelect}>
+            <Text style={styles.optionSelectText}>Edit Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.optionSelect}>
+            <Text style={styles.optionSelectText}>Reset Password</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.optionSelect}>
+            <Text style={styles.optionSelectText}>Delete Account</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login')}
+            style={styles.optionSelect}>
+            <Text style={styles.optionSelectText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </ImageBackground>
   );
 };
@@ -162,6 +194,19 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'rgba(102, 91, 167, 0.8)',
     height: 60,
+  },
+  modalOption: {
+    position: 'absolute',
+    top: 80,
+    right: 50,
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+  },
+  optionSelect: {
+    marginBottom: 10,
+  },
+  optionSelectText: {
+    fontSize: 15,
   },
 });
 
