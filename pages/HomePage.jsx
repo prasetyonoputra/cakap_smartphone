@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
 import {
   Image,
@@ -9,19 +10,44 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import UserService from '../services/UserService';
+import ContactService from '../services/ContactService';
 
 const HomePage = ({navigation}) => {
   const [modaloption, setModalOption] = useState(false);
+  const [userProfile, setUserProfile] = useState({});
+  const [listContact, setListContact] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+    const hideElement = navigation.addListener('focus', () => {
       setModalOption(false);
     });
-    return unsubscribe;
+    return hideElement;
   }, [navigation]);
 
-  const handleOpenModalOption = () => {
-    setModalOption(!modaloption);
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = await AsyncStorage.getItem('token');
+
+      if (!token) {
+        navigation.navigate('Login');
+      } else {
+        const responseUserProfile = await UserService.getUserProfile(token);
+        setUserProfile(responseUserProfile.user);
+
+        const responseListContact = await ContactService.getListContact(token);
+        setListContact(responseListContact.contacts);
+      }
+    };
+
+    fetchData();
+  }, [navigation]);
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('token', () =>
+      console.log('Success remove token!'),
+    );
+    navigation.navigate('Login');
   };
 
   return (
@@ -36,50 +62,44 @@ const HomePage = ({navigation}) => {
               style={styles.imageProfile}
               source={require('../assets/images/default-logo.png')}
             />
-            <Text style={styles.usernameText}>Name User</Text>
+            <View>
+              <Text
+                style={
+                  styles.usernameText
+                }>{`${userProfile.firstName} ${userProfile.lastName}`}</Text>
+              <Text style={styles.statusText}>
+                {userProfile.status ? userProfile.status : 'Offline'}
+              </Text>
+            </View>
           </View>
 
-          <TouchableOpacity onPress={() => handleOpenModalOption()}>
+          <TouchableOpacity onPress={() => setModalOption(!modaloption)}>
             <Icon name="caret-down" size={24} color="black" />
           </TouchableOpacity>
         </View>
 
         <View>
-          <TouchableOpacity style={styles.contactContainer}>
-            <View style={styles.profileContactContainer}>
-              <Image
-                style={styles.imageProfileContact}
-                source={require('../assets/images/default-logo.png')}
-              />
-              <Text style={styles.usernameText}>Name User</Text>
-            </View>
+          {listContact &&
+            listContact.map(contact => (
+              <TouchableOpacity style={styles.contactContainer}>
+                <View style={styles.profileContactContainer}>
+                  <Image
+                    style={styles.imageProfileContact}
+                    source={require('../assets/images/default-logo.png')}
+                  />
+                  <Text
+                    style={
+                      styles.usernameText
+                    }>{`${contact.firstName} ${contact.lastName}`}</Text>
+                </View>
 
-            <Icon name="circle" size={24} color="green" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.contactContainer}>
-            <View style={styles.profileContactContainer}>
-              <Image
-                style={styles.imageProfileContact}
-                source={require('../assets/images/default-logo.png')}
-              />
-              <Text style={styles.usernameText}>Name User</Text>
-            </View>
-
-            <Icon name="circle" size={24} color="green" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.contactContainer}>
-            <View style={styles.profileContactContainer}>
-              <Image
-                style={styles.imageProfileContact}
-                source={require('../assets/images/default-logo.png')}
-              />
-              <Text style={styles.usernameText}>Name User</Text>
-            </View>
-
-            <Icon name="circle" size={24} color="green" />
-          </TouchableOpacity>
+                <Icon
+                  name="circle"
+                  size={24}
+                  color={contact.status === 'Online' ? 'green' : 'red'}
+                />
+              </TouchableOpacity>
+            ))}
         </View>
       </View>
 
@@ -107,7 +127,7 @@ const HomePage = ({navigation}) => {
             <Text style={styles.optionSelectText}>Delete Account</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => handleLogout()}
             style={styles.optionSelect}>
             <Text style={styles.optionSelectText}>Logout</Text>
           </TouchableOpacity>
@@ -123,7 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
     margin: 10,
   },
   backgroundImage: {
@@ -133,7 +153,6 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -155,6 +174,12 @@ const styles = StyleSheet.create({
   usernameText: {
     fontSize: 20,
     marginLeft: 15,
+    color: 'black',
+  },
+  statusText: {
+    fontSize: 15,
+    marginLeft: 15,
+    color: 'black',
   },
   profileContainer: {
     display: 'flex',
@@ -201,12 +226,16 @@ const styles = StyleSheet.create({
     right: 50,
     backgroundColor: '#FFFFFF',
     padding: 10,
+    borderColor: 'rgba(102, 91, 167, 0.2)',
+    borderWidth: 1,
+    borderRadius: 10,
   },
   optionSelect: {
     marginBottom: 10,
   },
   optionSelectText: {
     fontSize: 15,
+    color: 'black',
   },
 });
 

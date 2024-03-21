@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ImageBackground,
   StyleSheet,
@@ -9,7 +9,38 @@ import {
   Image,
 } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import AuthService from '../services/AuthService';
+
 const LoginPage = ({navigation}) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    const setElement = navigation.addListener('focus', () => {
+      setUsername('');
+      setPassword('');
+    });
+    return setElement;
+  }, [navigation]);
+
+  useEffect(() => {
+    const getToken = async () => await AsyncStorage.getItem('token');
+
+    if (getToken()) {
+      navigation.navigate('Home');
+    }
+  }, [navigation]);
+
+  const handleLogin = async () => {
+    const response = await AuthService.login(username, password);
+
+    if (response.token) {
+      await AsyncStorage.setItem('token', response.token);
+      navigation.navigate('Home');
+    }
+  };
+
   return (
     <ImageBackground
       source={require('../assets/images/background.jpg')}
@@ -25,7 +56,13 @@ const LoginPage = ({navigation}) => {
 
         <View style={styles.inputGroup}>
           <Text style={styles.labelForm}>Username</Text>
-          <TextInput style={styles.inputText} placeholder="Masukan Username" />
+          <TextInput
+            style={styles.inputText}
+            placeholder="Masukan Username"
+            placeholderTextColor="gray"
+            onChangeText={text => setUsername(text)}
+            value={username}
+          />
         </View>
 
         <View style={styles.inputGroup}>
@@ -34,13 +71,14 @@ const LoginPage = ({navigation}) => {
             style={styles.inputText}
             secureTextEntry={true}
             placeholder="Masukan Password"
+            placeholderTextColor="gray"
+            onChangeText={text => setPassword(text)}
+            value={password}
           />
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Home')}>
+          <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
         </View>
@@ -88,10 +126,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 16,
     backgroundColor: 'white',
+    color: 'black',
   },
   labelForm: {
     fontSize: 16,
     marginBottom: 5,
+    color: 'black',
   },
   buttonContainer: {
     width: '100%',
@@ -112,11 +152,13 @@ const styles = StyleSheet.create({
   },
   registerText: {
     marginBottom: 40,
+    color: 'black',
   },
   copyRightText: {
     fontWeight: 'bold',
     position: 'absolute',
     bottom: 10,
+    color: 'black',
   },
 });
 

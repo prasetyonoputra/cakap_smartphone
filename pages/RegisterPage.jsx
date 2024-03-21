@@ -41,6 +41,7 @@ const RegisterPage = ({navigation}) => {
             <TextInput
               style={styles.inputText}
               placeholder="Masukan Nama Depan"
+              placeholderTextColor={'gray'}
             />
           </View>
 
@@ -49,6 +50,7 @@ const RegisterPage = ({navigation}) => {
             <TextInput
               style={styles.inputText}
               placeholder="Masukan Nama Belakang"
+              placeholderTextColor={'gray'}
             />
           </View>
 
@@ -57,6 +59,7 @@ const RegisterPage = ({navigation}) => {
             <TextInput
               style={styles.inputText}
               placeholder="Masukan Email"
+              placeholderTextColor={'gray'}
               keyboardType="email-address"
             />
           </View>
@@ -66,6 +69,7 @@ const RegisterPage = ({navigation}) => {
             <TextInput
               style={styles.inputText}
               placeholder="Masukan Username"
+              placeholderTextColor={'gray'}
             />
           </View>
 
@@ -75,6 +79,7 @@ const RegisterPage = ({navigation}) => {
               style={styles.inputText}
               secureTextEntry={true}
               placeholder="Masukan Password"
+              placeholderTextColor={'gray'}
             />
           </View>
 
@@ -90,10 +95,12 @@ const RegisterPage = ({navigation}) => {
             Sudah punya akun?{' '}
             <Text onPress={e => navigation.navigate('Login')}>Login</Text>
           </Text>
-
-          <Text style={styles.copyRightText}>© 2024 Cakap Messenger</Text>
         </View>
       </ScrollView>
+
+      <View style={styles.copyRightContainer}>
+        <Text style={styles.copyRightText}>© 2024 Cakap Messenger</Text>
+      </View>
     </ImageBackground>
   );
 };
@@ -134,6 +141,7 @@ const styles = StyleSheet.create({
   labelForm: {
     fontSize: 16,
     marginBottom: 5,
+    color: 'black',
   },
   buttonContainer: {
     width: '100%',
@@ -154,11 +162,18 @@ const styles = StyleSheet.create({
   },
   loginText: {
     marginBottom: 40,
+    color: 'black',
   },
   copyRightText: {
     fontWeight: 'bold',
+    color: 'black',
+  },
+  copyRightContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    width: '100%',
     position: 'absolute',
-    bottom: 10,
+    bottom: 0,
   },
 });
 
