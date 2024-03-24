@@ -1,16 +1,12 @@
-const login = async (username, password) => {
+const getListChat = async (token, usernameReceiver) => {
   try {
     const request = await fetch(
-      'http://192.168.100.249:8080/api/auth/login',
+      'http://192.168.100.249:8080/api/chat?usernameReceiver=' +
+        usernameReceiver,
       {
-        method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
       },
     );
 
@@ -25,8 +21,9 @@ const login = async (username, password) => {
     return response;
   } catch (error) {
     console.error(error);
+
     return null;
   }
 };
 
-export default {login};
+export default {getListChat};

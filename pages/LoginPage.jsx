@@ -11,25 +11,32 @@ import {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthService from '../services/AuthService';
+import UserService from '../services/UserService';
 
 const LoginPage = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    const setElement = navigation.addListener('focus', () => {
+    const setElement = navigation.addListener('focus', async () => {
       setUsername('');
       setPassword('');
+
+      const getToken = async () => await AsyncStorage.getItem('token');
+
+      const responseUserProfile = await UserService.getUserProfile(getToken);
+
+      if (responseUserProfile === null) {
+        await AsyncStorage.removeItem('token', () =>
+          console.log('Success remove token!'),
+        );
+
+        await AsyncStorage.removeItem('socketId', () =>
+          console.log('Success remove socket id!'),
+        );
+      }
     });
     return setElement;
-  }, [navigation]);
-
-  useEffect(() => {
-    const getToken = async () => await AsyncStorage.getItem('token');
-
-    if (getToken()) {
-      navigation.navigate('Home');
-    }
   }, [navigation]);
 
   const handleLogin = async () => {

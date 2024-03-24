@@ -10,13 +10,42 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import UserService from '../services/UserService';
 import ContactService from '../services/ContactService';
+import UserService from '../services/UserService';
+import useWebSocket from 'react-use-websocket';
+
+const WS_URL = 'ws://192.168.100.249:8000';
 
 const HomePage = ({navigation}) => {
   const [modaloption, setModalOption] = useState(false);
   const [userProfile, setUserProfile] = useState({});
   const [listContact, setListContact] = useState([]);
+
+  const {
+    sendJsonMessage,
+    lastMessage,
+    readyState,
+    getWebSocket,
+  } = useWebSocket(WS_URL, {
+    onOpen: event => {
+      console.log('WebSocket connection established.');
+    },
+    onClose: () => {
+      console.log('WebSocket connection closed.');
+    },
+    onError: event => {
+      console.error('WebSocket error:', event);
+    },
+    onMessage: async rawData => {
+      const data = JSON.parse(rawData.data);
+
+      if (data.type === 'sendId') {
+        console.log('User ID: ' + data.userId);
+        await AsyncStorage.setItem('socketId', data.userId);
+      }
+    },
+    shouldReconnect: closeEvent => true,
+  });
 
   useEffect(() => {
     const hideElement = navigation.addListener('focus', () => {
@@ -30,12 +59,15 @@ const HomePage = ({navigation}) => {
       const token = await AsyncStorage.getItem('token');
 
       if (!token) {
-        navigation.navigate('Login');
+        handleLogout();
       } else {
         const responseUserProfile = await UserService.getUserProfile(token);
-        setUserProfile(responseUserProfile.user);
-
         const responseListContact = await ContactService.getListContact(token);
+
+        if (responseUserProfile === null || responseListContact === null) {
+          handleLogout();
+        }
+        setUserProfile(responseUserProfile.user);
         setListContact(responseListContact.contacts);
       }
     };
@@ -47,6 +79,11 @@ const HomePage = ({navigation}) => {
     await AsyncStorage.removeItem('token', () =>
       console.log('Success remove token!'),
     );
+
+    await AsyncStorage.removeItem('socketId', () =>
+      console.log('Success remove socket id!'),
+    );
+
     navigation.navigate('Login');
   };
 
@@ -81,16 +118,23 @@ const HomePage = ({navigation}) => {
         <View>
           {listContact &&
             listContact.map(contact => (
-              <TouchableOpacity style={styles.contactContainer}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('Chat', {
+                    userName: contact.username,
+                    myUsername: userProfile.username
+                  })
+                }
+                style={styles.contactContainer}
+                key={contact.username}>
                 <View style={styles.profileContactContainer}>
                   <Image
                     style={styles.imageProfileContact}
                     source={require('../assets/images/default-logo.png')}
                   />
-                  <Text
-                    style={
-                      styles.usernameText
-                    }>{`${contact.firstName} ${contact.lastName}`}</Text>
+                  <Text style={styles.usernameText}>
+                    {`${contact.firstName} ${contact.lastName}`}
+                  </Text>
                 </View>
 
                 <Icon

@@ -1,7 +1,31 @@
 const getListContact = async token => {
   try {
+    const request = await fetch('http://192.168.100.249:8080/api/contact', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const response = await request.json();
+    if (request.ok) {
+      console.log(response.message);
+    } else {
+      console.error(response.message);
+      return null;
+    }
+
+    return response;
+  } catch (error) {
+    console.error(error);
+
+    return null;
+  }
+};
+
+const getDetailContact = async (token, username) => {
+  try {
     const request = await fetch(
-      'http://prasetyonoputra.cloud:8080/api/contact',
+      `http://192.168.100.249:8080/api/contact/detail?username=${username}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -14,6 +38,7 @@ const getListContact = async token => {
       console.log(response.message);
     } else {
       console.error(response.message);
+      return null;
     }
 
     return response;
@@ -24,4 +49,4 @@ const getListContact = async token => {
   }
 };
 
-export default {getListContact};
+export default {getListContact, getDetailContact};
