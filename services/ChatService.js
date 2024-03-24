@@ -1,7 +1,7 @@
 const getListChat = async (token, usernameReceiver) => {
   try {
     const request = await fetch(
-      'http://192.168.100.249:8080/api/chat?usernameReceiver=' +
+      'http://prasetyonoputra.cloud:8080/api/chat?usernameReceiver=' +
         usernameReceiver,
       {
         headers: {

@@ -1,6 +1,6 @@
 const getUserProfile = async token => {
   try {
-    const request = await fetch('http://192.168.100.249:8080/api/user/detail', {
+    const request = await fetch('http://prasetyonoputra.cloud:8080/api/user/detail', {
       headers: {
         Authorization: `Bearer ${token}`,
       },

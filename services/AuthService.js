@@ -1,7 +1,7 @@
 const login = async (username, password) => {
   try {
     const request = await fetch(
-      'http://192.168.100.249:8080/api/auth/login',
+      'http://prasetyonoputra.cloud:8080/api/auth/login',
       {
         method: 'POST',
         headers: {

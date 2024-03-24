@@ -14,7 +14,7 @@ import ContactService from '../services/ContactService';
 import UserService from '../services/UserService';
 import useWebSocket from 'react-use-websocket';
 
-const WS_URL = 'ws://192.168.100.249:8000';
+const WS_URL = 'ws://prasetyonoputra.cloud:8000';
 
 const HomePage = ({navigation}) => {
   const [modaloption, setModalOption] = useState(false);

@@ -16,7 +16,7 @@ import ChatService from '../services/ChatService';
 import ChatComponent from '../components/ChatComponent';
 import useWebSocket from 'react-use-websocket';
 
-const WS_URL = 'ws://192.168.100.249:8000';
+const WS_URL = 'ws://prasetyonoputra.cloud:8000';
 
 const ChatPage = ({navigation, route}) => {
   const [detailContact, setDetailContact] = useState({});
@@ -56,7 +56,7 @@ const ChatPage = ({navigation, route}) => {
     if (messageText === '') {
       return;
     }
-    
+
     const token = await AsyncStorage.getItem('token');
     const socketId = await AsyncStorage.getItem('socketId');
 

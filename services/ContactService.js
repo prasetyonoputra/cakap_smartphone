@@ -1,6 +1,6 @@
 const getListContact = async token => {
   try {
-    const request = await fetch('http://192.168.100.249:8080/api/contact', {
+    const request = await fetch('http://prasetyonoputra.cloud:8080/api/contact', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -25,7 +25,7 @@ const getListContact = async token => {
 const getDetailContact = async (token, username) => {
   try {
     const request = await fetch(
-      `http://192.168.100.249:8080/api/contact/detail?username=${username}`,
+      `http://prasetyonoputra.cloud:8080/api/contact/detail?username=${username}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
